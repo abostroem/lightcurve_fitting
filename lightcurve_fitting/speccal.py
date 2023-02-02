@@ -226,25 +226,22 @@ def readspec(f, verbose=False, return_header=False):
         x, y, hdr = readfitsspec(f, header=True)
     elif ext == '.json':
         x, y, hdr = readOSCspec(f)
-    elif ext == '.ecsv': #assume there's a header
-        # assume it's the first two columns, regardless of if column names are given
-        t = Table.read(f, format='ascii.ecsv') 
-        hdr = t.meta
-        x = t.columns[0]
-        y = t.columns[1]
     else:  # assume it's some ASCII format
         t = Table.read(f, format='ascii')
         # assume it's the first two columns, regardless of if column names are given
         x = t.columns[0]
         y = t.columns[1]
-        hdr = {}
-        comments = t.meta.get('comments', [])
-        for line in comments:
-            match = re.search('([^ ]*) *[=:] *([^/]*)', line)
-            if match is None:
-                continue
-            kwd, val = match.groups()  # (anything before first '='/':', anything between first '='/':' and '/')
-            hdr[kwd.strip(' #')] = val.strip(' "\'')
+        if ext == '.ecsv':
+            hdr = t.meta
+        else:
+            hdr = {}
+            comments = t.meta.get('comments', [])
+            for line in comments:
+                match = re.search('([^ ]*) *[=:] *([^/]*)', line)
+                if match is None:
+                    continue
+                kwd, val = match.groups()  # (anything before first '='/':', anything between first '='/':' and '/')
+                hdr[kwd.strip(' #')] = val.strip(' "\'')
     for kwd in ['MJD-OBS', 'MJD_OBS', 'MJD', 'JD', 'DATE-AVG', 'UTMIDDLE', 'DATE-OBS', 'DATE_BEG', 'UTSHUT', 'OBS_DATE',
                 'AVE_MJD', 'HJD']:
         if kwd in hdr and hdr[kwd]:
