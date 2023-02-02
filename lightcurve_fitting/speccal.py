@@ -240,7 +240,7 @@ def readspec(f, verbose=False, return_header=False):
             kwd, val = match.groups()  # (anything before first '='/':', anything between first '='/':' and '/')
             hdr[kwd.strip(' #')] = val.strip(' "\'')
     for kwd in ['MJD-OBS', 'MJD_OBS', 'MJD', 'JD', 'DATE-AVG', 'UTMIDDLE', 'DATE-OBS', 'DATE_BEG', 'UTSHUT', 'OBS_DATE',
-                'AVE_MJD']:
+                'AVE_MJD', 'HJD']:
         if kwd in hdr and hdr[kwd]:
             if 'MJD' in kwd:
                 date = Time(float(hdr[kwd]), format='mjd')
