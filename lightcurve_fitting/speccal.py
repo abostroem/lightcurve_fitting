@@ -226,6 +226,12 @@ def readspec(f, verbose=False, return_header=False):
         x, y, hdr = readfitsspec(f, header=True)
     elif ext == '.json':
         x, y, hdr = readOSCspec(f)
+    elif ext == '.ecsv': #assume there's a header
+        # assume it's the first two columns, regardless of if column names are given
+        t = Table.read(f, format='ascii.ecsv') 
+        hdr = t.meta
+        x = t.columns[0]
+        y = t.columns[1]
     else:  # assume it's some ASCII format
         t = Table.read(f, format='ascii')
         # assume it's the first two columns, regardless of if column names are given
